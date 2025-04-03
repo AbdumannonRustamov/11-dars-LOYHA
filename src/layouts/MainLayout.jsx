@@ -1,16 +1,17 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import AuthCheck from "../pages/AuthCheck";
 
 function MainLayout() {
   return (
-    <>
-      <Navbar />
+    <div>
+      <AuthCheck /> {/* Autentifikatsiya tekshiruvini amalga oshirish */}
+      <header>
+        {/* Navbar yoki boshqa umumiy komponentlar */}
+      </header>
       <main>
-        <Outlet />
+        <Outlet /> {/* Bolalar komponentlari shu yerda render qilinadi */}
       </main>
-      <Footer />
-    </>
+    </div>
   );
 }
 
