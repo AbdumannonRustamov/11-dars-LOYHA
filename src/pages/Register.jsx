@@ -1,24 +1,47 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
 import FormInput from "../components/FormInput";
+import { auth } from "../firebase/config";
+import { createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 function Register() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: "",
-    displayName: "",
-    password: "",
-  });
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const email = formData.get("email");
+    const displayName = formData.get("displayName");
+    const password = formData.get("password");
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+      await updateProfile(userCredential.user, {
+        displayName: displayName,
+      });
+
+      console.log("Foydalanuvchi yaratildi:", userCredential.user);
+
+      navigate("/");
+    } catch (error) {
+      console.error("Xatolik:", error.message);
+      alert("Royxatdan otishda xatolik yuz berdi: " + error.message);
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    localStorage.setItem("user", JSON.stringify(formData));
-    console.log("Foydalanuvchi royxatdan otdi:", formData);
-    navigate("/"); 
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
+
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      console.log("Google login bilan foydalanuvchi:", user);
+      navigate("/"); 
+    } catch (error) {
+      console.error("Google loginda xatolik:", error.message);
+      alert("Google bilan royxatdan otishda xatolik yuz berdi: " + error.message);
+    }
   };
 
   return (
@@ -28,13 +51,16 @@ function Register() {
         <div className="grid place-items-center login-register-left-section md:bg-none">
           <form onSubmit={handleSubmit} className="w-96">
             <h2 className="text-3xl text-center mb-5 font-bold">Register</h2>
-            <FormInput label="Email:" name="email" type="email" onChange={handleChange} />
-            <FormInput label="Display Name:" name="displayName" type="text" onChange={handleChange} />
-            <FormInput label="Password:" name="password" type="password" onChange={handleChange} />
+
+            <FormInput label="Email:" name="email" type="email" />
+            <FormInput label="Display Name:" name="displayName" type="text" />
+            <FormInput label="Password:" name="password" type="password" />
+
             <div className="flex items-center gap-5 mt-8 mb-8">
               <button type="submit" className="btn btn-primary grow">Register</button>
-              <button type="button" className="btn btn-secondary grow">Google</button>
+              <button type="button" className="btn btn-secondary grow" onClick={handleGoogleLogin}>Google</button>
             </div>
+
             <p className="text-center opacity-75">
               If you have an account
               <Link className="link link-primary" to="/login"> Login</Link>

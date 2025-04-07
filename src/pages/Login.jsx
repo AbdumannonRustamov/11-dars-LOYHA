@@ -1,27 +1,39 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
 import FormInput from "../components/FormInput";
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth } from "../firebase/config";
 
 function Login() {
   const navigate = useNavigate();
-  const [loginData, setLoginData] = useState({
-    email: "",
-    password: "",
-  });
 
-  const handleChange = (e) => {
-    setLoginData({ ...loginData, [e.target.name]: e.target.value });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log("Tizimga kirdingiz:", userCredential.user);
+      navigate("/");
+    } catch (error) {
+      console.error("Xatolik:", error.message);
+      alert("Email yoki parol xato");
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
 
-    if (storedUser.email === loginData.email && storedUser.password === loginData.password) {
-      console.log("Tizimga muvaffaqiyatli kirdingiz!");
-      navigate("/"); // Home sahifasiga yo‘naltirish
-    } else {
-      alert("Email yoki parol xato!");
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      console.log("Google bilan tizimga kirdingiz:", user);
+      navigate("/");
+    } catch (error) {
+      console.error("Google loginda xatolik:", error.message);
+      alert("Google bilan tizimga kiritishda xatolik yuz berdi: " + error.message);
     }
   };
 
@@ -35,12 +47,21 @@ function Login() {
             <h2 className="text-3xl text-center mb-5 font-bold text-white md:text-black">
               Login
             </h2>
-            <FormInput label="Email:" name="email" type="email" onChange={handleChange} />
-            <FormInput label="Password:" name="password" type="password" onChange={handleChange} />
+
+            <FormInput label="Email:" name="email" type="email" />
+            <FormInput label="Password:" name="password" type="password" />
+
             <div className="flex items-center gap-5 mt-8 mb-8">
               <button type="submit" className="btn btn-primary grow">Login</button>
-              <button type="button" className="btn btn-secondary grow">Google</button>
+              <button
+                type="button"
+                className="btn btn-secondary grow"
+                onClick={handleGoogleLogin} 
+              >
+                Google
+              </button>
             </div>
+
             <p className="text-center opacity-75">
               {"If you don't have an account"}
               <Link className="link link-primary" to="/register"> Register</Link>
@@ -50,6 +71,6 @@ function Login() {
       </div>
     </section>
   );
-}   
+}
 
 export default Login;

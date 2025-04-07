@@ -4,12 +4,12 @@ import AuthCheck from "../pages/AuthCheck";
 function MainLayout() {
   return (
     <div>
-      <AuthCheck /> {/* Autentifikatsiya tekshiruvini amalga oshirish */}
+      <AuthCheck /> 
       <header>
-        {/* Navbar yoki boshqa umumiy komponentlar */}
+       
       </header>
       <main>
-        <Outlet /> {/* Bolalar komponentlari shu yerda render qilinadi */}
+        <Outlet /> 
       </main>
     </div>
   );
