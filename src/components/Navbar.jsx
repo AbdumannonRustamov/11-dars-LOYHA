@@ -10,7 +10,7 @@ function Navbar() {
             Logo
           </Link>
         </div>
-        <div className="navbar-center"></div>         
+        <div className="navbar-center"></div>   
         <div className="navbar-end flex gap-3">
           <p>{userData?.displayName}</p>
         <div className="avatar">

@@ -11,7 +11,6 @@ import {
 function Register() {
   const navigate = useNavigate();
 
-  // Email orqali ro‘yxatdan o‘tish
   const handleSubmit = async (e) => {
     e.preventDefault();
 
