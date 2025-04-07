@@ -1,11 +1,17 @@
 import { Link, useNavigate } from "react-router-dom";
 import FormInput from "../components/FormInput";
 import { auth } from "../firebase/config";
-import { createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
 
 function Register() {
   const navigate = useNavigate();
 
+  // Email orqali ro‘yxatdan o‘tish
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -17,30 +23,38 @@ function Register() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
+      // Display name ni sozlash
       await updateProfile(userCredential.user, {
         displayName: displayName,
       });
 
       console.log("Foydalanuvchi yaratildi:", userCredential.user);
-
       navigate("/");
     } catch (error) {
       console.error("Xatolik:", error.message);
-      alert("Royxatdan otishda xatolik yuz berdi: " + error.message);
+      alert("Ro‘yxatdan o‘tishda xatolik yuz berdi: " + error.message);
     }
   };
 
+  // Google orqali ro‘yxatdan o‘tish
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
 
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
+
+      // Agar displayName bo'lmasa, random ism beriladi
+      if (!user.displayName) {
+        const defaultName = "User" + Math.floor(Math.random() * 10000);
+        await updateProfile(user, { displayName: defaultName });
+      }
+
       console.log("Google login bilan foydalanuvchi:", user);
-      navigate("/"); 
+      navigate("/");
     } catch (error) {
       console.error("Google loginda xatolik:", error.message);
-      alert("Google bilan royxatdan otishda xatolik yuz berdi: " + error.message);
+      alert("Google bilan ro‘yxatdan o‘tishda xatolik yuz berdi: " + error.message);
     }
   };
 
@@ -57,13 +71,24 @@ function Register() {
             <FormInput label="Password:" name="password" type="password" />
 
             <div className="flex items-center gap-5 mt-8 mb-8">
-              <button type="submit" className="btn btn-primary grow">Register</button>
-              <button type="button" className="btn btn-secondary grow" onClick={handleGoogleLogin}>Google</button>
+              <button type="submit" className="btn btn-primary grow">
+                Register
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary grow"
+                onClick={handleGoogleLogin}
+              >
+                Google
+              </button>
             </div>
 
             <p className="text-center opacity-75">
               If you have an account
-              <Link className="link link-primary" to="/login"> Login</Link>
+              <Link className="link link-primary" to="/login">
+                {" "}
+                Login
+              </Link>
             </p>
           </form>
         </div>
