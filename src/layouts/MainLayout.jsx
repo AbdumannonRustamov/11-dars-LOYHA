@@ -1,17 +1,11 @@
 import { Outlet } from "react-router-dom";
-import AuthCheck from "../pages/AuthCheck";
 
 function MainLayout() {
   return (
-    <div>
-      <AuthCheck /> 
-      <header>
-       
-      </header>
-      <main>
-        <Outlet /> 
-      </main>
-    </div>
+    <main className="p-4">
+      {/* Navbar yoki sidebar bo‘lsa shu yerga qo‘shing */}
+      <Outlet />
+    </main>
   );
 }
 
