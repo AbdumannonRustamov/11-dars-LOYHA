@@ -6,7 +6,7 @@ import Create from "../pages/Create";
 import { collection, getDocs } from "firebase/firestore";
 
 function Home() {
-  const [users, setUsers] = useState([]);
+  const [ setUsers] = useState([]);
   const [userData, setUserData] = useState(() => {
     const saved = localStorage.getItem("userData");
     return saved ? JSON.parse(saved) : null;
@@ -32,7 +32,7 @@ function Home() {
     };
 
     fetchUsers();
-  }, []);
+  }, );
 
   return (
     <div className="page-container flex relative">
