@@ -11,7 +11,7 @@ function Home() {
     const saved = localStorage.getItem("userData");
     return saved ? JSON.parse(saved) : null;
   });
-  const [showCreate, setShowCreate] = useState(false); // Create form ko'rsatish uchun state
+  const [showCreate, setShowCreate] = useState(false);
 
   useEffect(() => {
     const currentUser = auth.currentUser;
@@ -50,7 +50,7 @@ function Home() {
         <span className="font-black text-lg ">{`hello: ${userData?.displayName}`}</span>
         <button 
           className="btn btn-success mt-10"
-          onClick={() => setShowCreate(!showCreate)} // Create formni ko'rsatish va yashirish
+          onClick={() => setShowCreate(!showCreate)}
         >
           Create
         </button>
